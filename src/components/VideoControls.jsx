@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-
+import '../App.css'
 
 const Select = styled.select`
     margin-left: 2px;
@@ -53,6 +53,7 @@ const VideoControls = ({ videoRef, setAspectRatio, setCropperPosition, aspectRat
                 id="aspectRatio"
                 value={aspectRatio}
                 onChange={handleAspectRatioChange}
+                className="dropdown-class"
             >
                 <option value="9:18">9:18</option>
                 <option value="9:16">9:16</option>
@@ -68,6 +69,7 @@ const VideoControls = ({ videoRef, setAspectRatio, setCropperPosition, aspectRat
                 id="playbackRate"
                 value={playbackRate}
                 onChange={changePlaybackRate}
+                className="dropdown-class"
             >
                 <option value="0.5">0.5x</option>
                 <option value="1">1x</option>

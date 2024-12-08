@@ -1,0 +1,10 @@
+/* Apply to all select elements */
+select:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
+
+.dropdown-class:focus-visible {
+    outline: none;
+    box-shadow: none;
+}
