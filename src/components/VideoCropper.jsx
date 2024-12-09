@@ -19,6 +19,8 @@ const VideoCropperUI = () => {
     const [isCropping, setIsCropping] = useState(false);
     const [aspectRatio, setAspectRatio] = useState("");
     const [cropperPosition, setCropperPosition] = useState({ top: 0, left: 50, width: 200, height: 0 });
+    const [coordinateRecords, setCoordinateRecords] = useState([]);
+    const [activeTab, setActiveTab] = useState("preview");
 
     useEffect(() => {
         if (videoRef.current) {
@@ -81,7 +83,7 @@ const VideoCropperUI = () => {
     };
 
     const updatePreview = () => {
-        if (!isCropping) return;
+        if (!isCropping || activeTab !== 'preview') return;
 
         const canvas = previewCanvasRef.current;
         const ctx = canvas.getContext("2d");
@@ -115,6 +117,15 @@ const VideoCropperUI = () => {
         };
 
         const upHandler = () => {
+            const record = {
+                timestamp: new Date().getTime(),
+                videoTimeElapsed: videoRef.current.currentTime,
+                cropperPosition: cropperPosition,
+                volume: volume,
+                playbackRate: playbackRate
+            };
+
+            setCoordinateRecords(prevRecords => [...prevRecords, record]);
             document.removeEventListener("mousemove", moveHandler);
             document.removeEventListener("mouseup", upHandler);
         };
@@ -126,9 +137,9 @@ const VideoCropperUI = () => {
 
 
     return (
-        <div style={{ display: "flex", flexDirection: "column", backgroundColor: "#282c34" }}>
+        <div style={{ display: "flex", flexDirection: "column" }}>
             <div style={{ display: "flex", flexDirection: "column", padding: "20px", color: "#fff", borderRadius: "8px" }}>
-                <Header />
+                <Header setActiveTab={setActiveTab} activeTab={activeTab} />
                 {/* Video and Cropper Section */}
                 <div style={{ display: "flex" }}>
                     <div style={{ flex: 1, marginRight: "20px", position: "relative" }}>
@@ -220,18 +231,21 @@ const VideoCropperUI = () => {
                             playbackRate={playbackRate}
                         />
                     </div>
-                    <CroppedPreview
+                    {activeTab === 'preview' && <CroppedPreview
                         previewCanvasRef={previewCanvasRef}
                         isCropping={isCropping}
-                    />
+                    />}
+                    {activeTab === 'generate' &&
+                        <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center" }}>
+                            <h5>Generate Session</h5>
+                            <p>This section is under development, please come back later!</p>
+                        </div>
+                    }
                 </div>
             </div>
             <Footer
                 setIsCropping={setIsCropping}
-                currentTime={currentTime}
-                cropperPosition={cropperPosition}
-                volume={volume}
-                playbackRate={playbackRate}
+                coordinateRecords={coordinateRecords}
             />
         </div>
     );
