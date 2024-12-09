@@ -100,19 +100,35 @@ const VideoCropperUI = () => {
         canvas.width = width;
         canvas.height = height;
 
-        ctx.drawImage(video, sx, sy, sWidth, sHeight, 0, 0, width, height);
+        const drawFrame = () => {
+            ctx.drawImage(video, sx, sy, sWidth, sHeight, 0, 0, width, height);
+            if (isCropping && activeTab === 'preview') {
+                requestAnimationFrame(drawFrame);
+            }
+        };
+
+        drawFrame();
     };
 
     const handleCropperMove = (e) => {
         e.stopPropagation();
         const startX = e.clientX;
         const videoRect = videoRef.current.getBoundingClientRect();
+        // initialise animationFrameId
+        let animationFrameId = null;
 
         const moveHandler = (moveEvent) => {
             const deltaX = moveEvent.clientX - startX;
-            setCropperPosition((prev) => {
-                const newLeft = Math.max(0, Math.min(prev.left + deltaX, videoRect.width - prev.width));
-                return { ...prev, left: newLeft };
+            if (animationFrameId) {
+                // before setting new animationFrameId, cancel the previous one prevents memory leaks
+                cancelAnimationFrame(animationFrameId);
+            }
+            // set new animationFrameId, requestAnimationFrame is a method that requests the browser to call a function to update an animation before the next repaint
+            animationFrameId = requestAnimationFrame(() => {
+                setCropperPosition((prev) => {
+                    const newLeft = Math.max(0, Math.min(prev.left + deltaX, videoRect.width - prev.width));
+                    return { ...prev, left: newLeft };
+                });
             });
         };
 
