@@ -133,6 +133,9 @@ const VideoCropperUI = () => {
         };
 
         const upHandler = () => {
+            if (animationFrameId) {
+                cancelAnimationFrame(animationFrameId);
+            }
             const record = {
                 timestamp: new Date().getTime(),
                 videoTimeElapsed: videoRef.current.currentTime,
